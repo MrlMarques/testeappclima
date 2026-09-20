@@ -22,7 +22,8 @@
             --accent-gold: #ffd700;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        /* Aplicando Courier New globalmente ou em elementos específicos */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Courier New", Courier, monospace; -webkit-tap-highlight-color: transparent; }
         
         body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
@@ -39,7 +40,6 @@
         .temp { font-size: 58px; font-weight: bold; margin: 10px 0; letter-spacing: -2px; color: var(--accent-gold); text-shadow: 0 2px 10px rgba(255,215,0,0.3);}
         .desc { font-size: 16px; text-transform: capitalize; margin-bottom: 15px; opacity: 0.9; color: var(--text-muted);}
         
-        /* Grid de detalhes atualizado para 3 colunas (Umidade, Vento, Chuva) */
         .details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-top: 1px solid var(--border-color); padding-top: 15px; margin-bottom: 20px; font-size: 13px; color: var(--text-muted); }
         .detail-item { background: rgba(255,255,255,0.03); padding: 8px 4px; border-radius: 12px; }
         .detail-item strong { color: var(--text-main); font-size: 14px; display: block; margin-top: 4px; }
@@ -55,7 +55,7 @@
         .hour-rain { font-size: 10px; color: #4facfe; font-weight: 500; }
 
         .search-box { display: flex; gap: 10px; width: 100%; margin-bottom: 20px; }
-        input { flex: 1; padding: 14px; border-radius: 14px; border: 1px solid var(--border-color); outline: none; background: rgba(20, 20, 20, 0.6); color: var(--text-main); font-size: 16px; }
+        input { flex: 1; padding: 14px; border-radius: 14px; border: 1px solid var(--border-color); outline: none; background: rgba(20, 20, 20, 0.6); color: var(--text-main); font-size: 15px; }
         input::placeholder { color: rgba(255,255,255,0.4); }
         input:focus { border-color: var(--accent-gold); box-shadow: 0 0 10px rgba(255,215,0,0.2);}
         
@@ -91,19 +91,15 @@
                 <div class="temp" id="tempValue">--°C</div>
                 <div class="desc" id="weatherDesc">Aguardando dados</div>
                 
-                <!-- Informações Principais expandidas com Chuva -->
                 <div class="details">
                     <div class="detail-item">Umidade<strong id="humidity">--%</strong></div>
                     <div class="detail-item">Vento<strong id="wind">-- km/h</strong></div>
                     <div class="detail-item">Chuva<strong id="rainChance">--%</strong></div>
                 </div>
 
-                <!-- Seção de Horas com previsão de chuva integrada -->
                 <div class="hourly-section">
                     <div class="hourly-title">Próximas Horas</div>
-                    <div class="hourly-scroll" id="hourlyScroll">
-                        <!-- Preenchido via JavaScript -->
-                    </div>
+                    <div class="hourly-scroll" id="hourlyScroll"></div>
                 </div>
             </div>
             
@@ -120,10 +116,10 @@
         <div id="tab-config" class="tab-content">
             <div class="card" style="text-align: left;">
                 <h1 style="margin-bottom: 15px; color: var(--accent-gold);">Clima Pro iOS</h1>
-                <p style="font-size: 14px; opacity: 0.8; line-height: 1.6; margin-bottom: 15px; color: var(--text-muted);">
-                    Aplicativo web progressivo de alto desempenho estruturado com tema premium Preto e Dourado.
+                <p style="font-size: 13px; opacity: 0.9; line-height: 1.6; margin-bottom: 15px; color: var(--text-muted);">
+                    “Aplicativo web progressivo de alto desempenho estruturado com API global desenvolvido por Mrl•Marques”
                 </p>
-                <div style="font-size: 13px; color: var(--accent-gold);">Versão 2.2.0 Pro</div>
+                <div style="font-size: 12px; color: var(--accent-gold);">Versão 2.3.0 Pro</div>
             </div>
         </div>
 
@@ -172,7 +168,6 @@
                 cidadeAtualNome = `${lugar.name}, ${lugar.country}`;
                 document.getElementById('cityName').innerText = cidadeAtualNome;
 
-                // Requisição expandida incluindo parâmetros de precipitação horária e atual
                 let weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lugar.latitude}&longitude=${lugar.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,precipitation`);
                 let weatherData = await weatherRes.json();
 
@@ -186,7 +181,6 @@
                 if (current.weather_code >= 3) descText = "Nublado / Chuvoso";
                 document.getElementById('weatherDesc').innerText = descText;
 
-                // Obter índice da hora atual para extrair a probabilidade de chuva do momento
                 let agora = new Date();
                 let horaAtualIndex = weatherData.hourly.time.findIndex(t => new Date(t) >= agora);
                 if (horaAtualIndex === -1) horaAtualIndex = 0;
@@ -194,7 +188,6 @@
                 let chanceChuvaAtual = weatherData.hourly.precipitation_probability[horaAtualIndex] || 0;
                 document.getElementById('rainChance').innerText = `${chanceChuvaAtual}%`;
 
-                // Renderizar carrossel de horas com chuva
                 renderizarHoras(weatherData.hourly, horaAtualIndex);
 
             } catch (error) {
