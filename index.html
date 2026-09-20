@@ -80,7 +80,8 @@
         <!-- ABA 1: CLIMA ATUAL & HORAS -->
         <div id="tab-clima" class="tab-content active">
             <div class="search-box">
-                <input type="text" id="cityInput" placeholder="Buscar cidade...">
+                <!-- Valor padrão alterado para Taubaté -->
+                <input type="text" id="cityInput" placeholder="Buscar cidade..." value="Taubaté">
                 <button onclick="buscarPorTexto()">Buscar</button>
             </div>
             
@@ -142,7 +143,7 @@
     </nav>
 
     <script>
-        let cidadeAtualNome = "São Paulo";
+        let cidadeAtualNome = "Taubaté";
 
         function mudarAba(abaId, elementoBtn) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -168,7 +169,6 @@
                 cidadeAtualNome = `${lugar.name}, ${lugar.country}`;
                 document.getElementById('cityName').innerText = cidadeAtualNome;
 
-                // Requisição puxando dados atuais e horários previstos
                 let weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lugar.latitude}&longitude=${lugar.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code`);
                 let weatherData = await weatherRes.json();
 
@@ -182,7 +182,6 @@
                 if (current.weather_code >= 3) descText = "Nublado / Chuvoso";
                 document.getElementById('weatherDesc').innerText = descText;
 
-                // Processar Próximas Horas
                 renderizarHoras(weatherData.hourly);
 
             } catch (error) {
@@ -194,7 +193,6 @@
             let container = document.getElementById('hourlyScroll');
             container.innerHTML = '';
 
-            // Encontrar o índice da hora atual para exibir as próximas 8 horas
             let agora = new Date();
             let horaAtualIndex = hourly.time.findIndex(t => new Date(t) >= agora);
             if (horaAtualIndex === -1) horaAtualIndex = 0;
@@ -265,7 +263,8 @@
         }
 
         window.onload = () => {
-            buscarClimaPorNome("São Paulo");
+            // Inicializa diretamente buscando Taubaté
+            buscarClimaPorNome("Taubaté");
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js');
             }
